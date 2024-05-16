@@ -1,2 +1,2 @@
-# restaurant
-restaurant ordering system in Java
+# Restaurant
+Restaurant ordering system in Java
