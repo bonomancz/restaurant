@@ -13,4 +13,8 @@ public class Dishes {
     }
 
     public int getId(){return this.id;}
+    public String getTitle(){return this.title;}
+    public String getImage(){return this.image;}
+    public int getPrice(){return this.price;}
+    public int getPreparationTime(){return this.preparationTime;}
 }

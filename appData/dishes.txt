@@ -1,0 +1,6 @@
+1,Boloňské špagety,bolonske_spagety_01,195,20
+2,Minerální voda,mineralni_voda_01,40,0
+3,Kuřecí řízek obalovaný 150 g,kureci_rizek_obalovany_01,240,15
+4,Hranolky 150 g,hranolky_01,45,8
+5,Pstruh na víně 200 g,pstruh_na_vine_01,260,20
+6,Kofola 0,5l,kofola_01,40,0

@@ -9,4 +9,5 @@ public class Tables {
     }
 
     public int getId(){return this.id;}
+    public int getCapacity(){return this.capacity;}
 }

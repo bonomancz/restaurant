@@ -9,19 +9,13 @@
 ################################################################################################
  */
 
-import cz.bonoman.restaurant.Manager;
+import cz.bonoman.restaurant.RestaurantManager;
 
 public class Main {
-    private static final Manager manager = new Manager();
+    private static final RestaurantManager manager = new RestaurantManager();
 
-    public static void main(String[] args) {
-        initSystem();
-    }
-
-    private static void initSystem(){
-        manager.initDataStorage();
-        manager.initTables(20);
-        manager.initDishes();
-        manager.initOrders();
+    public static void main(String[] args){
+        System.out.println("RESTAURANT ORDERING system starting.");
+        manager.initSystem();
     }
 }
