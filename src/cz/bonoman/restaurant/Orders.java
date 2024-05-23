@@ -12,6 +12,8 @@ public class Orders {
     public Orders(LocalDateTime orderedTime, LocalDateTime fulfilmentTime, Tables table, Dishes dish, int count, boolean isDelivered, boolean isPaid, int id){
         this.id = id;
         this.count = count;
+        this.isDelivered = isDelivered;
+        this.isPaid = isPaid;
         this.table = table;
         this.dish = dish;
         this.orderedTime = orderedTime;

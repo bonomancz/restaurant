@@ -1,6 +1,12 @@
-1,Boloňské špagety,bolonske_spagety_01,195,20
-2,Minerální voda,mineralni_voda_01,40,0
-3,Kuřecí řízek obalovaný 150 g,kureci_rizek_obalovany_01,240,15
-4,Hranolky 150 g,hranolky_01,45,8
-5,Pstruh na víně 200 g,pstruh_na_vine_01,260,20
-6,Kofola 0,5l,kofola_01,40,0
+0;Minerální voda;mineralni_voda_01;40;5
+1;Pomerančový džus 0,2l;pomerancovy_dzus_01;40;5
+2;Kofola 0,5l;kofola_01;40;5
+3;Pilsner Urquell 0,5l;pilsner_urquell_01;50;8
+4;Irsai Oliver 0,2l;irsai_oliver_01;80;5
+5;Kuřecí řízek obalovaný 150 g;kureci_rizek_obalovany_01;240;15
+6;Hranolky 150 g;hranolky_01;45;8
+7;Boloňské špagety;bolonske_spagety_01;195;20
+8;Pstruh na víně 200 g;pstruh_na_vine_01;260;20
+9;Srnčí guláš;srnci_gulas_01;195;15
+10;Těstoviny Aglio Olio Pepperoncino;testoviny_aglio_01;180;15
+11;Domácí hamburger 350g;domaci_hamburger_01;290;25
