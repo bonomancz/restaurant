@@ -1,8 +1,8 @@
 package cz.bonoman.restaurant;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class RestaurantManager {
         dataHandler = new DataHandler();
     }
 
-    public boolean isDataStorageAvailable(){
+    public boolean isDataStorageAvailable() throws StorageDataException {
         boolean isDataStorageAvailable = true;
         if(!dataHandler.isDataStorageAvailable()){
             isDataStorageAvailable = false;
@@ -33,48 +33,54 @@ public class RestaurantManager {
         this.dishesList.clear();
     }
 
-    public void prepareDataStorage(){
-        this.dataHandler.prepareDataFiles();
+    public void prepareDataStorage() throws StorageDataException{
+        try {
+            this.dataHandler.prepareDataFiles();
+        }catch(IOException e){
+            throw new StorageDataException("prepareDataStorage() " + e.getMessage());
+        }
     }
 
-    public void loadStorageData(){
-        boolean isOrdersLoaded = false;
-        boolean isDishesLoaded = false;
-        boolean isTablesLoaded = false;
-        if(this.dataHandler.isDataStorageAvailable()) {
-            try {
-                ArrayList<Dishes> loadDishesList = new ArrayList<>(this.dataHandler.loadDishesFromStorage());
-                if (!loadDishesList.isEmpty()) {
-                    this.dishesList = loadDishesList;
-                    isDishesLoaded = true;
+    public void loadStorageData() throws RestaurantException {
+        boolean isOrdersLoaded = false, isDishesLoaded = false, isTablesLoaded = false;
+        try {
+            if (this.dataHandler.isDataStorageAvailable()) {
+                try {
+                    ArrayList<Dishes> loadDishesList = new ArrayList<>(this.dataHandler.loadDishesFromStorage());
+                    if (!loadDishesList.isEmpty()) {
+                        this.dishesList = loadDishesList;
+                        isDishesLoaded = true;
+                    }
+                    ArrayList<Tables> loadTablesList = new ArrayList<>(this.dataHandler.loadTablesFromStorage());
+                    if (!loadTablesList.isEmpty()) {
+                        this.tablesList = loadTablesList;
+                        isTablesLoaded = true;
+                    }
+                    ArrayList<Orders> loadOrdersList = new ArrayList<>(this.dataHandler.loadOrdersFromStorage());
+                    if (!loadOrdersList.isEmpty()) {
+                        this.ordersList = loadOrdersList;
+                        isOrdersLoaded = true;
+                    }
+                }catch (RestaurantException e){
+                    System.err.println(e.getMessage());
                 }
-                ArrayList<Tables> loadTablesList = new ArrayList<>(this.dataHandler.loadTablesFromStorage());
-                if (!loadTablesList.isEmpty()) {
-                    this.tablesList = loadTablesList;
-                    isTablesLoaded = true;
-                }
-                ArrayList<Orders> loadOrdersList = new ArrayList<>(this.dataHandler.loadOrdersFromStorage());
-                if (!loadOrdersList.isEmpty()) {
-                    this.ordersList = loadOrdersList;
-                    isOrdersLoaded = true;
-                }
-            }catch(RuntimeException e){
-                e.printStackTrace();
             }
-        }
-        if(isOrdersLoaded && isDishesLoaded && isTablesLoaded) {
-            System.out.println("Storage data loaded successfully.");
-        }else{
-            this.flushMemoryStructures();
-            this.prepareDataStorage();
-            this.initDishes();
-            this.initTables(20);
-            this.initOrders();
-            throw new RuntimeException("Storage: Data not loaded completely. System will continue with empty data files.");
+            if (isOrdersLoaded && isDishesLoaded && isTablesLoaded) {
+                System.out.println("Storage data loaded successfully.");
+            } else {
+                this.flushMemoryStructures();
+                this.prepareDataStorage();
+                this.initDishes();
+                this.initTables(20);
+                this.initOrders();
+                throw new RestaurantException("Storage: Data not loaded completely. System will continue with empty data files.");
+            }
+        }catch(StorageDataException e){
+            throw new RestaurantException("loadStorageData(): " + e.getMessage());
         }
     }
 
-    public void initDishes(){
+    public void initDishes() throws RestaurantException{
         this.dishListAdd(new Dishes("Minerální voda", "mineralni_voda_01", 5, 40, this.getNextDishId()));
         this.dishListAdd(new Dishes("Pomerančový džus 0,2l", "pomerancovy_dzus_01", 5, 40, this.getNextDishId()));
         this.dishListAdd(new Dishes("Kofola 0,5l", "kofola_01", 5, 40, this.getNextDishId()));
@@ -89,13 +95,13 @@ public class RestaurantManager {
         this.dishListAdd(new Dishes("Domácí hamburger 350g", "domaci_hamburger_01", 25, 290, this.getNextDishId()));
     }
 
-    public void initTables(int tablesCount){
+    public void initTables(int tablesCount) throws RestaurantException{
         for(int i = 0; i < tablesCount; i++){
             this.tableListAdd(new Tables(4, getNextTableId()));
         }
     }
 
-    public void initOrders(){
+    public void initOrders() throws RestaurantException{
         this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,38,17), null, this.getTablesList().get(8), this.getDishesList().get(1), 4, false, false, this.getNextOrderId()));
         this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,40,6), null, this.getTablesList().get(15), this.getDishesList().get(5), 2, false, false, this.getNextOrderId()));
         this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,40,6), null, this.getTablesList().get(15), this.getDishesList().get(6), 2, false, false, this.getNextOrderId()));
@@ -107,17 +113,17 @@ public class RestaurantManager {
         this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,51,39), LocalDateTime.of(2024, 5, 25,15, 59,6), this.getTablesList().get(2), this.getDishesList().get(4), 1, true, false, this.getNextOrderId()));
     }
 
-    public void dishListAdd(Dishes input){
+    public void dishListAdd(Dishes input) throws RestaurantException{
         this.dishesList.add(input);
         this.dataHandler.saveDishesToStorage(new ArrayList<>(this.getDishesList()));
     }
 
-    public void tableListAdd(Tables input) {
+    public void tableListAdd(Tables input) throws RestaurantException{
         this.tablesList.add(input);
         this.dataHandler.saveTablesToStorage(new ArrayList<>(this.getTablesList()));
     }
 
-    public void orderListAdd(Orders input){
+    public void orderListAdd(Orders input) throws RestaurantException{
         this.ordersList.add(input);
         this.dataHandler.saveOrdersToStorage(new ArrayList<>(this.getOrdersList()));
     }

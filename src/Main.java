@@ -9,6 +9,7 @@
 ################################################################################################
  */
 
+import cz.bonoman.restaurant.RestaurantException;
 import cz.bonoman.restaurant.RestaurantManager;
 
 public class Main {
@@ -20,13 +21,12 @@ public class Main {
             System.out.println("RESTAURANT ORDERING system starting.");
             initSystem();
             System.out.println(manager.printOrders(manager.getUnfinishedOrders()));
-        }catch (RuntimeException e){
-            e.printStackTrace();
+        }catch (RestaurantException e){
+            System.err.println(e.getMessage());
         }
-
     }
 
-    private static void initSystem(){
+    private static void initSystem() throws RestaurantException{
         try {
             if (manager.isDataStorageAvailable()) {
                 System.out.println("Data storage available.\nReading storage data.");
@@ -38,8 +38,8 @@ public class Main {
                 manager.initDishes();
                 manager.initOrders();
             }
-        }catch(RuntimeException e){
-            e.printStackTrace();
+        }catch(Exception e){
+            throw new RestaurantException("initSystem(): " + e.getMessage());
         }
     }
 
