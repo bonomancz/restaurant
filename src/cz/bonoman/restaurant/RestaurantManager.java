@@ -7,14 +7,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class RestaurantManager {
-    private List<Orders> ordersList;
-    private List<Dishes> dishesList;
-    private List<Tables> tablesList;
+    private List<Order> orderList;
+    private List<Dish> dishList;
+    private List<Table> tablesList;
     private final DataHandler dataHandler;
 
     public RestaurantManager(){
-        ordersList = new ArrayList<>();
-        dishesList = new ArrayList<>();
+        orderList = new ArrayList<>();
+        dishList = new ArrayList<>();
         tablesList = new ArrayList<>();
         dataHandler = new DataHandler();
     }
@@ -28,9 +28,9 @@ public class RestaurantManager {
     }
 
     public void flushMemoryStructures(){
-        this.ordersList.clear();
+        this.orderList.clear();
         this.tablesList.clear();
-        this.dishesList.clear();
+        this.dishList.clear();
     }
 
     public void prepareDataStorage() throws StorageDataException{
@@ -46,12 +46,12 @@ public class RestaurantManager {
         try {
             if (this.isDataStorageAvailable()) {
                 try {
-                    ArrayList<Dishes> loadDishesList = new ArrayList<>(this.dataHandler.loadDishesFromStorage());
-                    if (!loadDishesList.isEmpty()) {this.dishesList = loadDishesList;isDishesLoaded = true;}
-                    ArrayList<Tables> loadTablesList = new ArrayList<>(this.dataHandler.loadTablesFromStorage());
-                    if (!loadTablesList.isEmpty()) {this.tablesList = loadTablesList;isTablesLoaded = true;}
-                    ArrayList<Orders> loadOrdersList = new ArrayList<>(this.dataHandler.loadOrdersFromStorage());
-                    if (!loadOrdersList.isEmpty()) {this.ordersList = loadOrdersList;isOrdersLoaded = true;}
+                    ArrayList<Dish> loadDishList = new ArrayList<>(this.dataHandler.loadDishesFromStorage());
+                    if (!loadDishList.isEmpty()) {this.dishList = loadDishList;isDishesLoaded = true;}
+                    ArrayList<Table> loadTableList = new ArrayList<>(this.dataHandler.loadTablesFromStorage());
+                    if (!loadTableList.isEmpty()) {this.tablesList = loadTableList;isTablesLoaded = true;}
+                    ArrayList<Order> loadOrderList = new ArrayList<>(this.dataHandler.loadOrdersFromStorage());
+                    if (!loadOrderList.isEmpty()) {this.orderList = loadOrderList;isOrdersLoaded = true;}
                 }catch (RestaurantException e){System.err.println(e.getMessage());}
             }
             if (isOrdersLoaded && isDishesLoaded && isTablesLoaded) { // content load from existing storage
@@ -64,56 +64,56 @@ public class RestaurantManager {
     }
 
     public void initDishes() throws RestaurantException{
-        this.dishListAdd(new Dishes("Minerální voda", "mineralni_voda_01", 5, 40, this.getNextDishId()));
-        this.dishListAdd(new Dishes("Pomerančový džus 0,2l", "pomerancovy_dzus_01", 5, 40, this.getNextDishId()));
-        this.dishListAdd(new Dishes("Kofola 0,5l", "kofola_01", 5, 40, this.getNextDishId()));
-        this.dishListAdd(new Dishes("Pilsner Urquell 0,5l", "pilsner_urquell_01", 8, 50, this.getNextDishId()));
-        this.dishListAdd(new Dishes("Irsai Oliver 0,2l", "irsai_oliver_01", 5, 80, this.getNextDishId()));
-        this.dishListAdd(new Dishes("Kuřecí řízek obalovaný 150 g", "kureci_rizek_obalovany_01", 15, 240, this.getNextDishId()));
-        this.dishListAdd(new Dishes("Hranolky 150 g", "hranolky_01", 8, 45, this.getNextDishId()));
-        this.dishListAdd(new Dishes("Boloňské špagety", "bolonske_spagety_01", 20, 195, this.getNextDishId()));
-        this.dishListAdd(new Dishes("Pstruh na víně 200 g", "pstruh_na_vine_01", 20, 260, this.getNextDishId()));
-        this.dishListAdd(new Dishes("Srnčí guláš", "srnci_gulas_01", 15, 195, this.getNextDishId()));
-        this.dishListAdd(new Dishes("Těstoviny Aglio Olio Pepperoncino", "testoviny_aglio_01", 15, 180, this.getNextDishId()));
-        this.dishListAdd(new Dishes("Domácí hamburger 350g", "domaci_hamburger_01", 25, 290, this.getNextDishId()));
+        this.dishListAdd(new Dish("Minerální voda", "mineralni_voda_01", 5, 40, this.getNextDishId()));
+        this.dishListAdd(new Dish("Pomerančový džus 0,2l", "pomerancovy_dzus_01", 5, 40, this.getNextDishId()));
+        this.dishListAdd(new Dish("Kofola 0,5l", "kofola_01", 5, 40, this.getNextDishId()));
+        this.dishListAdd(new Dish("Pilsner Urquell 0,5l", "pilsner_urquell_01", 8, 50, this.getNextDishId()));
+        this.dishListAdd(new Dish("Irsai Oliver 0,2l", "irsai_oliver_01", 5, 80, this.getNextDishId()));
+        this.dishListAdd(new Dish("Kuřecí řízek obalovaný 150 g", "kureci_rizek_obalovany_01", 15, 240, this.getNextDishId()));
+        this.dishListAdd(new Dish("Hranolky 150 g", "hranolky_01", 8, 45, this.getNextDishId()));
+        this.dishListAdd(new Dish("Boloňské špagety", "bolonske_spagety_01", 20, 195, this.getNextDishId()));
+        this.dishListAdd(new Dish("Pstruh na víně 200 g", "pstruh_na_vine_01", 20, 260, this.getNextDishId()));
+        this.dishListAdd(new Dish("Srnčí guláš", "srnci_gulas_01", 15, 195, this.getNextDishId()));
+        this.dishListAdd(new Dish("Těstoviny Aglio Olio Pepperoncino", "testoviny_aglio_01", 15, 180, this.getNextDishId()));
+        this.dishListAdd(new Dish("Domácí hamburger 350g", "domaci_hamburger_01", 25, 290, this.getNextDishId()));
     }
 
     public void initTables(int tablesCount) throws RestaurantException{
         for(int i = 0; i < tablesCount; i++){
-            this.tableListAdd(new Tables(4, getNextTableId()));
+            this.tableListAdd(new Table(4, getNextTableId()));
         }
     }
 
     public void initOrders() throws RestaurantException{
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,38,17), null, this.getTablesList().get(8), this.getDishesList().get(1), 4, false, false, this.getNextOrderId()));
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,37,10), null, this.getTablesList().get(15), this.getDishesList().get(5), 2, false, false, this.getNextOrderId()));
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,39,5), null, this.getTablesList().get(15), this.getDishesList().get(6), 2, false, false, this.getNextOrderId()));
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,34,15), LocalDateTime.of(2024,5,25,15,45,26), this.getTablesList().get(15), this.getDishesList().get(2), 2, true, false, this.getNextOrderId()));
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,50,56), null, this.getTablesList().get(2), this.getDishesList().get(9), 1, false, false, this.getNextOrderId()));
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,50,54), null, this.getTablesList().get(2), this.getDishesList().get(8), 1, false, false, this.getNextOrderId()));
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,50,58), LocalDateTime.of(2024, 5, 25,16, 5,12), this.getTablesList().get(2), this.getDishesList().get(3), 1, true, false, this.getNextOrderId()));
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,51,0), null, this.getTablesList().get(2), this.getDishesList().get(6), 1, false, false, this.getNextOrderId()));
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,51,39), LocalDateTime.of(2024, 5, 25,15, 59,6), this.getTablesList().get(2), this.getDishesList().get(4), 1, true, false, this.getNextOrderId()));
+        this.orderListAdd(new Order(LocalDateTime.of(2024,5,25,15,38,17), null, this.getTablesList().get(8), this.getDishesList().get(1), 4, false, false, this.getNextOrderId()));
+        this.orderListAdd(new Order(LocalDateTime.of(2024,5,25,15,37,10), null, this.getTablesList().get(15), this.getDishesList().get(5), 2, false, false, this.getNextOrderId()));
+        this.orderListAdd(new Order(LocalDateTime.of(2024,5,25,15,39,5), null, this.getTablesList().get(15), this.getDishesList().get(6), 2, false, false, this.getNextOrderId()));
+        this.orderListAdd(new Order(LocalDateTime.of(2024,5,25,15,34,15), LocalDateTime.of(2024,5,25,15,45,26), this.getTablesList().get(15), this.getDishesList().get(2), 2, true, false, this.getNextOrderId()));
+        this.orderListAdd(new Order(LocalDateTime.of(2024,5,25,15,50,56), null, this.getTablesList().get(2), this.getDishesList().get(9), 1, false, false, this.getNextOrderId()));
+        this.orderListAdd(new Order(LocalDateTime.of(2024,5,25,15,50,54), null, this.getTablesList().get(2), this.getDishesList().get(8), 1, false, false, this.getNextOrderId()));
+        this.orderListAdd(new Order(LocalDateTime.of(2024,5,25,15,50,58), LocalDateTime.of(2024, 5, 25,16, 5,12), this.getTablesList().get(2), this.getDishesList().get(3), 1, true, false, this.getNextOrderId()));
+        this.orderListAdd(new Order(LocalDateTime.of(2024,5,25,15,51,0), null, this.getTablesList().get(2), this.getDishesList().get(6), 1, false, false, this.getNextOrderId()));
+        this.orderListAdd(new Order(LocalDateTime.of(2024,5,25,15,51,39), LocalDateTime.of(2024, 5, 25,15, 59,6), this.getTablesList().get(2), this.getDishesList().get(4), 1, true, false, this.getNextOrderId()));
     }
 
-    public void dishListAdd(Dishes input) throws RestaurantException{
-        this.dishesList.add(input);
+    public void dishListAdd(Dish input) throws RestaurantException{
+        this.dishList.add(input);
         this.dataHandler.saveDishesToStorage(new ArrayList<>(this.getDishesList()));
     }
 
-    public void tableListAdd(Tables input) throws RestaurantException{
+    public void tableListAdd(Table input) throws RestaurantException{
         this.tablesList.add(input);
         this.dataHandler.saveTablesToStorage(new ArrayList<>(this.getTablesList()));
     }
 
-    public void orderListAdd(Orders input) throws RestaurantException{
-        this.ordersList.add(input);
+    public void orderListAdd(Order input) throws RestaurantException{
+        this.orderList.add(input);
         this.dataHandler.saveOrdersToStorage(new ArrayList<>(this.getOrdersList()));
     }
 
-    public ArrayList<Orders> getUnfinishedOrders(){
-        ArrayList<Orders> unfinishedOrders = new ArrayList<>();
-        for(Orders order : this.getOrdersList()){
+    public ArrayList<Order> getUnfinishedOrders(){
+        ArrayList<Order> unfinishedOrders = new ArrayList<>();
+        for(Order order : this.getOrdersList()){
             if(!order.getIsDelivered()){
                 unfinishedOrders.add(order);
             }
@@ -123,7 +123,7 @@ public class RestaurantManager {
 
     public int getSpendingOnTable(int tableNumber){
         int spending = 0, subSum = 0;
-        for(Orders order : this.getOrdersList()){
+        for(Order order : this.getOrdersList()){
             if(order.getTableId() == tableNumber){
                 int price = order.getDish().getPrice();
                 int count = order.getCount();
@@ -144,10 +144,10 @@ public class RestaurantManager {
         return avgFfTime.toString();
     }
 
-    public ArrayList<Orders> getOrdersByTable(int tableNumber){
-        ArrayList<Orders> tableOrders = new ArrayList<>();
+    public ArrayList<Order> getOrdersByTable(int tableNumber){
+        ArrayList<Order> tableOrders = new ArrayList<>();
         HashMap<Integer, Integer> dishesIds = new HashMap<Integer, Integer>();
-        for(Orders order : this.getOrdersList()){
+        for(Order order : this.getOrdersList()){
             if(order.getTable().getId() == tableNumber){
                 int dishId = order.getDish().getId();
                 if(!dishesIds.containsKey(dishId)) {
@@ -155,7 +155,7 @@ public class RestaurantManager {
                     dishesIds.put(dishId, 1);
                 }else{
                     dishesIds.put(dishId, dishesIds.get(dishId) + 1);
-                    for(Orders tmpOrder : tableOrders){
+                    for(Order tmpOrder : tableOrders){
                         if(tmpOrder.getDish().getId() == dishId){
                             tmpOrder.setCount(dishesIds.get(dishId));
                         }
@@ -166,12 +166,12 @@ public class RestaurantManager {
         return tableOrders;
     }
 
-    public String printOrders(ArrayList<Orders> inputList, String header){
+    public String printOrders(ArrayList<Order> inputList, String header){
         StringBuilder orders  = new StringBuilder();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         int counter = 1, tableId = 0;
         orders.append("\n******\n");
-        for(Orders order : inputList){
+        for(Order order : inputList){
             tableId = order.getTableId();
             String getCountStr = order.getCount() > 1 ? String.valueOf(order.getCount()) + "x " : "";
             String getCompletePriceStr = order.getCount() > 1 ? String.valueOf(order.getDish().getPrice() * order.getCount()) : String.valueOf(order.getDish().getPrice());
@@ -200,21 +200,21 @@ public class RestaurantManager {
 
     public void sortOrders(String sortBy){
         switch(sortBy) {
-            case "orderedTime": this.ordersList.sort(Comparator.comparing(Orders::getOrderedTime));
+            case "orderedTime": this.orderList.sort(Comparator.comparing(Order::getOrderedTime));
                                 break;
-            case "id":          this.ordersList.sort(Comparator.comparing(Orders::getId));
+            case "id":          this.orderList.sort(Comparator.comparing(Order::getId));
                                 break;
-            case "tableId":     this.ordersList.sort(Comparator.comparing(Orders::getTableId));
+            case "tableId":     this.orderList.sort(Comparator.comparing(Order::getTableId));
                                 break;
-            default:            this.ordersList.sort(Comparator.comparing(Orders::getId));
+            default:            this.orderList.sort(Comparator.comparing(Order::getId));
                                 break;
         }
     }
 
-    private ArrayList<Dishes> getTodaysOrdersDishes(){
-        ArrayList<Dishes> todaysOrdersDishes = new ArrayList<>();
+    private ArrayList<Dish> getTodaysOrdersDishes(){
+        ArrayList<Dish> todaysOrdersDishes = new ArrayList<>();
         ArrayList<Integer> tmpDishes = new ArrayList<>();
-        for(Orders order : this.getOrdersList()){
+        for(Order order : this.getOrdersList()){
             if (!tmpDishes.contains(order.getDish().getId())) {
                 tmpDishes.add(order.getDish().getId());
                 todaysOrdersDishes.add(order.getDish());
@@ -227,7 +227,7 @@ public class RestaurantManager {
         StringBuilder todaysDishes = new StringBuilder();
         todaysDishes.append("\n** Dnes objednaná jídla **\n******\n");
         int counter = 1;
-        for(Dishes dish : this.getTodaysOrdersDishes()){
+        for(Dish dish : this.getTodaysOrdersDishes()){
             todaysDishes.append(counter).append(". ").append(dish.getTitle()).append("\n");
             counter++;
         }
@@ -238,7 +238,7 @@ public class RestaurantManager {
     public int getAverageFulfilmentTime(){
         int fulfilmentTime = 0, counter = 0;
         long minutes = 0;
-        for(Orders order : this.getOrdersList()){
+        for(Order order : this.getOrdersList()){
             if(order.getFulfilmentTime() != null){
                 LocalDateTime start = order.getOrderedTime();
                 LocalDateTime stop = order.getFulfilmentTime();
@@ -268,7 +268,7 @@ public class RestaurantManager {
         int nextId, id;
         nextId = 0;
         if(!this.tablesList.isEmpty()) {
-            for (Tables table : this.tablesList) {
+            for (Table table : this.tablesList) {
                 id = table.getId();
                 if (id > nextId) {
                     nextId = id;
@@ -282,8 +282,8 @@ public class RestaurantManager {
     public int getNextDishId(){
         int nextId, id;
         nextId = 0;
-        if(!this.dishesList.isEmpty()) {
-            for (Dishes dish : this.dishesList) {
+        if(!this.dishList.isEmpty()) {
+            for (Dish dish : this.dishList) {
                 id = dish.getId();
                 if (id > nextId) {
                     nextId = id;
@@ -297,8 +297,8 @@ public class RestaurantManager {
     public int getNextOrderId(){
         int nextId, id;
         nextId = 0;
-        if(!this.ordersList.isEmpty()) {
-            for (Orders order : this.ordersList) {
+        if(!this.orderList.isEmpty()) {
+            for (Order order : this.orderList) {
                 id = order.getId();
                 if (id > nextId) {
                     nextId = id;
@@ -309,7 +309,7 @@ public class RestaurantManager {
         return nextId;
     }
 
-    public ArrayList<Tables> getTablesList(){return new ArrayList<>(this.tablesList);}
-    public ArrayList<Dishes> getDishesList(){return new ArrayList<>(this.dishesList);}
-    public ArrayList<Orders> getOrdersList(){return new ArrayList<>(this.ordersList);}
+    public ArrayList<Table> getTablesList(){return new ArrayList<>(this.tablesList);}
+    public ArrayList<Dish> getDishesList(){return new ArrayList<>(this.dishList);}
+    public ArrayList<Order> getOrdersList(){return new ArrayList<>(this.orderList);}
 }

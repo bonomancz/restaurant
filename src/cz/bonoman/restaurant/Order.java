@@ -2,14 +2,14 @@ package cz.bonoman.restaurant;
 
 import java.time.LocalDateTime;
 
-public class Orders {
+public class Order {
     private int id, count;
     private boolean isDelivered, isPaid;
-    private Tables table;
-    private Dishes dish;
+    private Table table;
+    private Dish dish;
     private LocalDateTime orderedTime, fulfilmentTime;
 
-    public Orders(LocalDateTime orderedTime, LocalDateTime fulfilmentTime, Tables table, Dishes dish, int count, boolean isDelivered, boolean isPaid, int id){
+    public Order(LocalDateTime orderedTime, LocalDateTime fulfilmentTime, Table table, Dish dish, int count, boolean isDelivered, boolean isPaid, int id){
         this.id = id;
         this.count = count;
         this.isDelivered = isDelivered;
@@ -21,8 +21,8 @@ public class Orders {
     }
 
     public int getId(){return this.id;}
-    public Dishes getDish(){return this.dish;}
-    public Tables getTable(){return this.table;}
+    public Dish getDish(){return this.dish;}
+    public Table getTable(){return this.table;}
     public int getTableId(){return this.table.getId();}
     public int getCount(){return this.count;}
     public boolean getIsDelivered(){return this.isDelivered;}

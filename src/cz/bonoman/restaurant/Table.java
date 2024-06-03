@@ -1,9 +1,9 @@
 package cz.bonoman.restaurant;
 
-public class Tables {
+public class Table {
     private int id, capacity;
 
-    public Tables(int capacity, int id){
+    public Table(int capacity, int id){
         this.capacity = capacity;
         this.id = id;
     }

@@ -21,8 +21,8 @@ public class DataHandler {
         this.tablesFile = new File(tablesTxtFile);
     }
 
-    public ArrayList<Dishes> loadDishesFromStorage() throws RestaurantException{
-        ArrayList<Dishes> dishes = new ArrayList<>();
+    public ArrayList<Dish> loadDishesFromStorage() throws RestaurantException{
+        ArrayList<Dish> dishes = new ArrayList<>();
         try {
             if (this.isReadable(this.dishesFile)) {
                 for (String record : this.fileRead(this.dishesFile)) {
@@ -34,7 +34,7 @@ public class DataHandler {
                             String image = splPart[2].trim();
                             int price = Integer.parseInt(splPart[3].trim());
                             int preparationTime = Integer.parseInt(splPart[4].trim());
-                            dishes.add(new Dishes(title, image, preparationTime, price, id));
+                            dishes.add(new Dish(title, image, preparationTime, price, id));
                         }
                     }catch (RestaurantException e){
                         dishes.clear();
@@ -48,8 +48,8 @@ public class DataHandler {
         return dishes;
     }
 
-    public ArrayList<Tables> loadTablesFromStorage() throws RestaurantException{
-        ArrayList<Tables> tables = new ArrayList<>();
+    public ArrayList<Table> loadTablesFromStorage() throws RestaurantException{
+        ArrayList<Table> tables = new ArrayList<>();
         try {
             if (this.isReadable(this.tablesFile)) {
                 for (String record : this.fileRead(this.tablesFile)) {
@@ -58,7 +58,7 @@ public class DataHandler {
                             String[] splPart = record.split(";");
                             int id = Integer.parseInt(splPart[0].trim());
                             int capacity = Integer.parseInt(splPart[1].trim());
-                            tables.add(new Tables(capacity, id));
+                            tables.add(new Table(capacity, id));
                         }
                     }catch(RestaurantException e){
                         tables.clear();
@@ -72,8 +72,8 @@ public class DataHandler {
         return tables;
     }
 
-    public ArrayList<Orders> loadOrdersFromStorage() throws RestaurantException{
-        ArrayList<Orders> orders = new ArrayList<>();
+    public ArrayList<Order> loadOrdersFromStorage() throws RestaurantException{
+        ArrayList<Order> orders = new ArrayList<>();
         try {
             if (this.isReadable(this.ordersFile)) {
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'H:mm:ss");
@@ -89,7 +89,7 @@ public class DataHandler {
                             boolean isPaid = Boolean.parseBoolean(splPart[5].trim());
                             LocalDateTime orderedTime = LocalDateTime.parse(splPart[6].trim(), inputFormatter);
                             LocalDateTime fulfilmentTime = "null".equals(splPart[7].trim()) ? null : LocalDateTime.parse(splPart[7].trim(), inputFormatter);
-                            orders.add(new Orders(orderedTime, fulfilmentTime, this.loadTablesFromStorage().get(tableId), this.loadDishesFromStorage().get(dishId), count, isDelivered, isPaid, id));
+                            orders.add(new Order(orderedTime, fulfilmentTime, this.loadTablesFromStorage().get(tableId), this.loadDishesFromStorage().get(dishId), count, isDelivered, isPaid, id));
                         }
                     }catch(RestaurantException e){
                         System.err.println("loadOrdersFromStorage(): " + e.getMessage());
@@ -138,11 +138,11 @@ public class DataHandler {
         return isValidOrderRecord;
     }
 
-    public void saveDishesToStorage(List<Dishes> inputList) throws RestaurantException{
+    public void saveDishesToStorage(List<Dish> inputList) throws RestaurantException{
         try {
             if (this.isWriteable(this.dishesFile)) {
                 ArrayList<String> writeList = new ArrayList<>();
-                for (Dishes dish : inputList) {
+                for (Dish dish : inputList) {
                     writeList.add(dish.getId() + ";" + dish.getTitle() + ";" + dish.getImage() + ";" + dish.getPrice() + ";" + dish.getPreparationTime());
                 }
                 fileWrite(this.dishesFile, writeList);
@@ -152,11 +152,11 @@ public class DataHandler {
         }
     }
 
-    public void saveTablesToStorage(List<Tables> inputList) throws RestaurantException{
+    public void saveTablesToStorage(List<Table> inputList) throws RestaurantException{
         try{
             if(this.isWriteable(this.tablesFile)) {
                 ArrayList<String> writeList = new ArrayList<>();
-                for (Tables table : inputList) {
+                for (Table table : inputList) {
                     writeList.add(table.getId() + ";" + table.getCapacity());
                 }
                 fileWrite(this.tablesFile, writeList);
@@ -166,12 +166,12 @@ public class DataHandler {
         }
     }
 
-    public void saveOrdersToStorage(List<Orders> inputList) throws RestaurantException{
+    public void saveOrdersToStorage(List<Order> inputList) throws RestaurantException{
         try {
             if (this.isWriteable(this.ordersFile)) {
                 ArrayList<String> writeList = new ArrayList<>();
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-                for (Orders order : inputList) {
+                for (Order order : inputList) {
                     String orderedDateTime = order.getOrderedTime().format(dateTimeFormatter);
                     String fulfilmentTime = order.getFulfilmentTime() == null ? "null" : order.getFulfilmentTime().format(dateTimeFormatter);
                     writeList.add(order.getId() + ";" + order.getDish().getId() + ";" + order.getTable().getId() + ";" + order.getCount() + ";" + order.getIsDelivered() + ";" + order.getIsPaid() + ";" + orderedDateTime + ";" + fulfilmentTime);
