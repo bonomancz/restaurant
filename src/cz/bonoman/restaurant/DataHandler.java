@@ -58,7 +58,7 @@ public class DataHandler {
                             String[] splPart = record.split(";");
                             int id = Integer.parseInt(splPart[0].trim());
                             int capacity = Integer.parseInt(splPart[1].trim());
-                            tables.add(new Tables(id, capacity));
+                            tables.add(new Tables(capacity, id));
                         }
                     }catch(RestaurantException e){
                         tables.clear();
@@ -109,7 +109,7 @@ public class DataHandler {
         Matcher matcher = pattern.matcher(input);
         if(!matcher.matches()){
             isValidTableRecord = false;
-            throw new RestaurantException("Storage: Ignoring invalid TABLE record: " + input);
+            throw new RestaurantException("Storage: Přeskakujeme nekorektní záznam stolu: " + input);
         }
         return isValidTableRecord;
     }
@@ -121,7 +121,7 @@ public class DataHandler {
         Matcher matcher = pattern.matcher(input);
         if(!matcher.matches()){
             isValidDishRecord = false;
-            throw new RestaurantException("Storage: Ignoring invalid DISH record: " + input);
+            throw new RestaurantException("Storage: Přeskakujeme nekorektní záznam pokrmu: " + input);
         }
         return isValidDishRecord;
     }
@@ -133,7 +133,7 @@ public class DataHandler {
         Matcher matcher = pattern.matcher(input);
         if(!matcher.matches()){
             isValidOrderRecord = false;
-            throw new RestaurantException("Storage: Ignoring invalid ORDER record: " + input);
+            throw new RestaurantException("Storage: Přeskakujeme nekorektní záznam objednávky: " + input);
         }
         return isValidOrderRecord;
     }
@@ -197,7 +197,7 @@ public class DataHandler {
             }
         }catch(IOException e){
             isDataStorageAvailable = false;
-            throw new StorageDataException("isDataStorageAvailable(): " + e.getMessage());
+            throw new StorageDataException("DataHandler::isDataStorageAvailable(): " + e.getMessage());
         }
         return isDataStorageAvailable;
     }
@@ -206,7 +206,7 @@ public class DataHandler {
         boolean isWriteable = true;
         if (!inputFile.canWrite()) {
             isWriteable = false;
-            throw new IOException("isWriteable(): file " + inputFile + " is not writeable.");
+            throw new IOException("isWriteable(): soubor " + inputFile + " není k dispozici pro zápis.");
         }
         return isWriteable;
     }
@@ -215,7 +215,7 @@ public class DataHandler {
         boolean isReadable = true;
         if (!inputFile.canRead()) {
             isReadable = false;
-            throw new IOException("isReadable(): file " + inputFile + " is not readable.");
+            throw new IOException("isReadable(): soubor " + inputFile + " není k dispozici pro čtení.");
         }
         return isReadable;
     }

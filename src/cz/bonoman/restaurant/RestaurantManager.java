@@ -3,8 +3,8 @@ package cz.bonoman.restaurant;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 public class RestaurantManager {
     private List<Orders> ordersList;
@@ -19,10 +19,10 @@ public class RestaurantManager {
         dataHandler = new DataHandler();
     }
 
-    public boolean isDataStorageAvailable() throws StorageDataException {
-        boolean isDataStorageAvailable = true;
-        if(!dataHandler.isDataStorageAvailable()){
-            isDataStorageAvailable = false;
+    public boolean isDataStorageAvailable() throws StorageDataException{
+        boolean isDataStorageAvailable = false;
+        if (this.dataHandler.isDataStorageAvailable()) {
+            isDataStorageAvailable = true;
         }
         return isDataStorageAvailable;
     }
@@ -44,40 +44,23 @@ public class RestaurantManager {
     public void loadStorageData() throws RestaurantException {
         boolean isOrdersLoaded = false, isDishesLoaded = false, isTablesLoaded = false;
         try {
-            if (this.dataHandler.isDataStorageAvailable()) {
+            if (this.isDataStorageAvailable()) {
                 try {
                     ArrayList<Dishes> loadDishesList = new ArrayList<>(this.dataHandler.loadDishesFromStorage());
-                    if (!loadDishesList.isEmpty()) {
-                        this.dishesList = loadDishesList;
-                        isDishesLoaded = true;
-                    }
+                    if (!loadDishesList.isEmpty()) {this.dishesList = loadDishesList;isDishesLoaded = true;}
                     ArrayList<Tables> loadTablesList = new ArrayList<>(this.dataHandler.loadTablesFromStorage());
-                    if (!loadTablesList.isEmpty()) {
-                        this.tablesList = loadTablesList;
-                        isTablesLoaded = true;
-                    }
+                    if (!loadTablesList.isEmpty()) {this.tablesList = loadTablesList;isTablesLoaded = true;}
                     ArrayList<Orders> loadOrdersList = new ArrayList<>(this.dataHandler.loadOrdersFromStorage());
-                    if (!loadOrdersList.isEmpty()) {
-                        this.ordersList = loadOrdersList;
-                        isOrdersLoaded = true;
-                    }
-                }catch (RestaurantException e){
-                    System.err.println(e.getMessage());
-                }
+                    if (!loadOrdersList.isEmpty()) {this.ordersList = loadOrdersList;isOrdersLoaded = true;}
+                }catch (RestaurantException e){System.err.println(e.getMessage());}
             }
-            if (isOrdersLoaded && isDishesLoaded && isTablesLoaded) {
-                System.out.println("Storage data loaded successfully.");
-            } else {
-                this.flushMemoryStructures();
-                this.prepareDataStorage();
-                this.initDishes();
-                this.initTables(20);
-                this.initOrders();
-                throw new RestaurantException("Storage: Data not loaded completely. System will continue with empty data files.");
+            if (isOrdersLoaded && isDishesLoaded && isTablesLoaded) { // content load from existing storage
+                System.out.println("Data v pořádku načtena.");
+            } else { // unavailable storage, content generated automatically
+                this.flushMemoryStructures();this.prepareDataStorage();this.initDishes();this.initTables(20);this.initOrders();
+                throw new RestaurantException("Storage: Data nebyla kompletně načtena. Systém bude pokračovat s prázdnými daty.");
             }
-        }catch(StorageDataException e){
-            throw new RestaurantException("loadStorageData(): " + e.getMessage());
-        }
+        }catch(StorageDataException e){throw new RestaurantException("loadStorageData(): " + e.getMessage());}
     }
 
     public void initDishes() throws RestaurantException{
@@ -103,9 +86,9 @@ public class RestaurantManager {
 
     public void initOrders() throws RestaurantException{
         this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,38,17), null, this.getTablesList().get(8), this.getDishesList().get(1), 4, false, false, this.getNextOrderId()));
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,40,6), null, this.getTablesList().get(15), this.getDishesList().get(5), 2, false, false, this.getNextOrderId()));
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,40,6), null, this.getTablesList().get(15), this.getDishesList().get(6), 2, false, false, this.getNextOrderId()));
-        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,40,6), LocalDateTime.of(2024,5,18,15,45,26), this.getTablesList().get(15), this.getDishesList().get(2), 2, true, false, this.getNextOrderId()));
+        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,37,10), null, this.getTablesList().get(15), this.getDishesList().get(5), 2, false, false, this.getNextOrderId()));
+        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,39,5), null, this.getTablesList().get(15), this.getDishesList().get(6), 2, false, false, this.getNextOrderId()));
+        this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,34,15), LocalDateTime.of(2024,5,25,15,45,26), this.getTablesList().get(15), this.getDishesList().get(2), 2, true, false, this.getNextOrderId()));
         this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,50,56), null, this.getTablesList().get(2), this.getDishesList().get(9), 1, false, false, this.getNextOrderId()));
         this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,50,54), null, this.getTablesList().get(2), this.getDishesList().get(8), 1, false, false, this.getNextOrderId()));
         this.orderListAdd(new Orders(LocalDateTime.of(2024,5,25,15,50,58), LocalDateTime.of(2024, 5, 25,16, 5,12), this.getTablesList().get(2), this.getDishesList().get(3), 1, true, false, this.getNextOrderId()));
@@ -134,27 +117,152 @@ public class RestaurantManager {
             if(!order.getIsDelivered()){
                 unfinishedOrders.add(order);
             }
-            //System.out.println(order.getIsDelivered());
         }
         return unfinishedOrders;
     }
 
-    public String printOrders(ArrayList<Orders> inputList){
+    public int getSpendingOnTable(int tableNumber){
+        int spending = 0, subSum = 0;
+        for(Orders order : this.getOrdersList()){
+            if(order.getTableId() == tableNumber){
+                int price = order.getDish().getPrice();
+                int count = order.getCount();
+                if(price > 0 && count > 0) {
+                    subSum = (price * count);
+                    //System.out.println(subSum = (price * count));
+                    //System.out.println(price * count);
+                    //System.out.println(subSum + " " + count + " " + subSum);
+                }
+                spending += subSum;
+            }
+        }
+        return spending;
+    }
+
+    public String printSpendingOnTable(int tableNumber){
+        StringBuilder avgFfTime = new StringBuilder();
+        avgFfTime.append("\n** Celková cena konzumace pro stůl " + tableNumber + " **\n******\n");
+        avgFfTime.append(this.getSpendingOnTable(tableNumber)).append(" Kč").append("\n");
+        avgFfTime.append("******");
+        return avgFfTime.toString();
+    }
+
+    public ArrayList<Orders> getOrdersByTable(int tableNumber){
+        ArrayList<Orders> tableOrders = new ArrayList<>();
+        HashMap<Integer, Integer> dishesIds = new HashMap<Integer, Integer>();
+        for(Orders order : this.getOrdersList()){
+            if(order.getTable().getId() == tableNumber){
+                int dishId = order.getDish().getId();
+                if(!dishesIds.containsKey(dishId)) {
+                    tableOrders.add(order);
+                    dishesIds.put(dishId, 1);
+                }else{
+                    dishesIds.put(dishId, dishesIds.get(dishId) + 1);
+                    for(Orders tmpOrder : tableOrders){
+                        if(tmpOrder.getDish().getId() == dishId){
+                            tmpOrder.setCount(dishesIds.get(dishId));
+                        }
+                    }
+                }
+            }
+        }
+        return tableOrders;
+    }
+
+    public String printOrders(ArrayList<Orders> inputList, String header){
         StringBuilder orders  = new StringBuilder();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        int counter = 1;
+        int counter = 1, tableId = 0;
+        orders.append("\n******\n");
         for(Orders order : inputList){
-            String getFulfilmentTime = order.getFulfilmentTime() == null ? "nevydáno" : order.getFulfilmentTime().format(dateTimeFormatter);
-            orders.append(counter).append(". ");
-            orders.append(order.getDish().getTitle());
-            orders.append(" (").append(order.getDish().getPrice());
-            orders.append(" Kč):\t").append(order.getOrderedTime().format(dateTimeFormatter));
-            orders.append("-").append(getFulfilmentTime);
-            orders.append("\n");
+            tableId = order.getTableId();
+            String getCountStr = order.getCount() > 1 ? String.valueOf(order.getCount()) + "x " : "";
+            String getCompletePriceStr = order.getCount() > 1 ? String.valueOf(order.getDish().getPrice() * order.getCount()) : String.valueOf(order.getDish().getPrice());
+            String getFulfilmentTime = order.getFulfilmentTime() == null ? "" : order.getFulfilmentTime().format(dateTimeFormatter);
+            String getPaidStatus = order.getIsPaid() ? " zaplaceno" : "";
+            orders.append(counter).append(". ").append(order.getDish().getTitle()).append(" ").append(getCountStr).append("(").append(getCompletePriceStr).append(" Kč):\t").append(order.getOrderedTime().format(dateTimeFormatter)).append("-");
+            orders.append(getFulfilmentTime).append("\t").append(getPaidStatus).append("\n");
             counter++;
         }
+        orders.append("******");
+        orders.insert(0, "\n** " + prepareHeaderString(tableId, header) + " **");
         return orders.toString();
     }
+
+    private String prepareHeaderString(int tableId, String header){
+        String headerStr = "";
+        String tableIdString = String.valueOf(tableId);
+        if(tableId < 10){tableIdString = " " + tableIdString;}
+        switch(header){
+            case "forTable":    headerStr = "Objednávky pro stůl č. " + tableIdString + " "; break;
+            case "unfinished":  headerStr = "Nedokončené objednávky"; break;
+            default:            headerStr = "Všechny objednávky"; break;
+        }
+        return headerStr;
+    }
+
+    public void sortOrders(String sortBy){
+        switch(sortBy) {
+            case "orderedTime": this.ordersList.sort(Comparator.comparing(Orders::getOrderedTime));
+                                break;
+            case "id":          this.ordersList.sort(Comparator.comparing(Orders::getId));
+                                break;
+            case "tableId":     this.ordersList.sort(Comparator.comparing(Orders::getTableId));
+                                break;
+            default:            this.ordersList.sort(Comparator.comparing(Orders::getId));
+                                break;
+        }
+    }
+
+    private ArrayList<Dishes> getTodaysOrdersDishes(){
+        ArrayList<Dishes> todaysOrdersDishes = new ArrayList<>();
+        ArrayList<Integer> tmpDishes = new ArrayList<>();
+        for(Orders order : this.getOrdersList()){
+            if (!tmpDishes.contains(order.getDish().getId())) {
+                tmpDishes.add(order.getDish().getId());
+                todaysOrdersDishes.add(order.getDish());
+            }
+        }
+        return todaysOrdersDishes;
+    }
+
+    public String printTodaysDishes(){
+        StringBuilder todaysDishes = new StringBuilder();
+        todaysDishes.append("\n** Dnes objednaná jídla **\n******\n");
+        int counter = 1;
+        for(Dishes dish : this.getTodaysOrdersDishes()){
+            todaysDishes.append(counter).append(". ").append(dish.getTitle()).append("\n");
+            counter++;
+        }
+        todaysDishes.append("******");
+        return todaysDishes.toString();
+    }
+
+    public int getAverageFulfilmentTime(){
+        int fulfilmentTime = 0, counter = 0;
+        long minutes = 0;
+        for(Orders order : this.getOrdersList()){
+            if(order.getFulfilmentTime() != null){
+                LocalDateTime start = order.getOrderedTime();
+                LocalDateTime stop = order.getFulfilmentTime();
+                minutes += ChronoUnit.MINUTES.between(start, stop);
+                counter++;
+            }
+        }
+        if(counter > 0 && minutes > 0) {
+            fulfilmentTime = (int)Math.ceil((float) minutes / counter);
+        }
+        return fulfilmentTime;
+    }
+
+    public String printAverageFulfilmentTime(){
+        StringBuilder avgFfTime = new StringBuilder();
+        avgFfTime.append("\n** Průměrný čas vydávání objednávek **\n******\n");
+        avgFfTime.append(this.getAverageFulfilmentTime()).append(" min.").append("\n");
+        avgFfTime.append("******");
+        return avgFfTime.toString();
+    }
+
 
     public void restoreStorageData(){}
     public void backupStorageData(){}

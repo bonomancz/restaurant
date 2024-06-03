@@ -23,9 +23,11 @@ public class Orders {
     public int getId(){return this.id;}
     public Dishes getDish(){return this.dish;}
     public Tables getTable(){return this.table;}
+    public int getTableId(){return this.table.getId();}
     public int getCount(){return this.count;}
     public boolean getIsDelivered(){return this.isDelivered;}
     public boolean getIsPaid(){return this.isPaid;}
     public LocalDateTime getOrderedTime(){return this.orderedTime;}
     public LocalDateTime getFulfilmentTime(){return this.fulfilmentTime;}
+    public void setCount(int input){this.count = input;}
 }
