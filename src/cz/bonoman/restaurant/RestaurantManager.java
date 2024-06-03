@@ -128,10 +128,7 @@ public class RestaurantManager {
                 int price = order.getDish().getPrice();
                 int count = order.getCount();
                 if(price > 0 && count > 0) {
-                    subSum = (price * count);
-                    //System.out.println(subSum = (price * count));
-                    //System.out.println(price * count);
-                    //System.out.println(subSum + " " + count + " " + subSum);
+                    subSum = price * count;
                 }
                 spending += subSum;
             }
@@ -141,7 +138,7 @@ public class RestaurantManager {
 
     public String printSpendingOnTable(int tableNumber){
         StringBuilder avgFfTime = new StringBuilder();
-        avgFfTime.append("\n** Celková cena konzumace pro stůl " + tableNumber + " **\n******\n");
+        avgFfTime.append("\n** Celková cena konzumace pro stůl č. " + tableNumber + " **\n******\n");
         avgFfTime.append(this.getSpendingOnTable(tableNumber)).append(" Kč").append("\n");
         avgFfTime.append("******");
         return avgFfTime.toString();
