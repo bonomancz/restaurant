@@ -28,6 +28,7 @@ public class Main {
             System.out.println(manager.printOrders(new ArrayList<>(manager.getUnfinishedOrders()), "unfinished"));
             System.out.println(manager.printAverageFulfilmentTime());
             System.out.println(manager.printTodaysDishes());
+            manager.backupDataToStorage();
         }catch (RestaurantException e){
             System.err.println("main(): " + e.getMessage());
         }
@@ -40,7 +41,7 @@ public class Main {
                 manager.loadStorageData();
             }
         }catch(StorageDataException e){
-            System.err.println("Datové úložiště není dostupné.\nPřipravují se data.");
+            System.err.println("Datové úložiště není dostupné.\nGenerují se nová data.");
             try{
                 manager.prepareDataStorage();
                 manager.initTables(20);

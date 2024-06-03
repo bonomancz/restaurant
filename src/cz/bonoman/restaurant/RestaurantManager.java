@@ -261,8 +261,17 @@ public class RestaurantManager {
     }
 
 
-    public void restoreStorageData(){}
-    public void backupStorageData(){}
+    public void restoreDataFromStorage() throws RestaurantException{
+        System.out.println("Probíhá načítání dat z úložiště...");
+        this.loadStorageData();
+    }
+
+    public void backupDataToStorage() throws RestaurantException{
+        System.out.println("Probíhá ukládání dat do úložiště...");
+        this.dataHandler.saveDishesToStorage(new ArrayList<>(this.getDishesList()));
+        this.dataHandler.saveTablesToStorage(new ArrayList<>(this.getTablesList()));
+        this.dataHandler.saveOrdersToStorage(new ArrayList<>(this.getOrdersList()));
+    }
 
     public int getNextTableId(){
         int nextId, id;
