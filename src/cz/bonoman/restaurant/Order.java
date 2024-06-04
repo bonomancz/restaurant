@@ -30,4 +30,6 @@ public class Order {
     public LocalDateTime getOrderedTime(){return this.orderedTime;}
     public LocalDateTime getFulfilmentTime(){return this.fulfilmentTime;}
     public void setCount(int input){this.count = input;}
+    public void setDelivered(boolean input){this.isDelivered = input;}
+    public void setPaid(boolean input){this.isPaid = input;}
 }

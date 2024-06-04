@@ -64,18 +64,24 @@ public class RestaurantManager {
     }
 
     public void initDishes() throws RestaurantException{
-        this.dishListAdd(new Dish("Minerální voda", "mineralni_voda_01", 5, 40, this.getNextDishId()));
-        this.dishListAdd(new Dish("Pomerančový džus 0,2l", "pomerancovy_dzus_01", 5, 40, this.getNextDishId()));
-        this.dishListAdd(new Dish("Kofola 0,5l", "kofola_01", 5, 40, this.getNextDishId()));
-        this.dishListAdd(new Dish("Pilsner Urquell 0,5l", "pilsner_urquell_01", 8, 50, this.getNextDishId()));
-        this.dishListAdd(new Dish("Irsai Oliver 0,2l", "irsai_oliver_01", 5, 80, this.getNextDishId()));
-        this.dishListAdd(new Dish("Kuřecí řízek obalovaný 150 g", "kureci_rizek_obalovany_01", 15, 240, this.getNextDishId()));
-        this.dishListAdd(new Dish("Hranolky 150 g", "hranolky_01", 8, 45, this.getNextDishId()));
-        this.dishListAdd(new Dish("Boloňské špagety", "bolonske_spagety_01", 20, 195, this.getNextDishId()));
-        this.dishListAdd(new Dish("Pstruh na víně 200 g", "pstruh_na_vine_01", 20, 260, this.getNextDishId()));
-        this.dishListAdd(new Dish("Srnčí guláš", "srnci_gulas_01", 15, 195, this.getNextDishId()));
-        this.dishListAdd(new Dish("Těstoviny Aglio Olio Pepperoncino", "testoviny_aglio_01", 15, 180, this.getNextDishId()));
-        this.dishListAdd(new Dish("Domácí hamburger 350g", "domaci_hamburger_01", 25, 290, this.getNextDishId()));
+        try {
+            this.dishListAdd(new Dish("Minerální voda", "mineralni_voda_01", 5, 40, this.getNextDishId()));
+            this.dishListAdd(new Dish("Pomerančový džus 0,2l", "pomerancovy_dzus_01", 5, 40, this.getNextDishId()));
+            this.dishListAdd(new Dish("Kofola 0,5l", "kofola_01", 5, 40, this.getNextDishId()));
+            this.dishListAdd(new Dish("Pilsner Urquell 0,5l", "pilsner_urquell_01", 8, 50, this.getNextDishId()));
+            this.dishListAdd(new Dish("Irsai Oliver 0,2l", "irsai_oliver_01", 5, 80, this.getNextDishId()));
+            this.dishListAdd(new Dish("Kuřecí řízek obalovaný 150 g", "kureci_rizek_obalovany_01", 15, 240, this.getNextDishId()));
+            this.dishListAdd(new Dish("Hranolky 150 g", "hranolky_01", 8, 45, this.getNextDishId()));
+            this.dishListAdd(new Dish("Boloňské špagety", "bolonske_spagety_01", 20, 195, this.getNextDishId()));
+            this.dishListAdd(new Dish("Pstruh na víně 200 g", "pstruh_na_vine_01", 20, 260, this.getNextDishId()));
+            this.dishListAdd(new Dish("Srnčí guláš", "srnci_gulas_01", 15, 195, this.getNextDishId()));
+            this.dishListAdd(new Dish("Těstoviny Aglio Olio Pepperoncino", "testoviny_aglio_01", 15, 180, this.getNextDishId()));
+            this.dishListAdd(new Dish("Domácí hamburger 350g", "domaci_hamburger_01", 25, 290, this.getNextDishId()));
+            this.dishListAdd(new Dish("Procesecco 0,7l", "prosecco_01", 5, 340, this.getNextDishId()));
+        }catch(RestaurantException e){
+            throw new RestaurantException("initDishes(): " + e.getMessage());
+        }
+
     }
 
     public void initTables(int tablesCount) throws RestaurantException{
@@ -97,8 +103,8 @@ public class RestaurantManager {
     }
 
     public void dishListAdd(Dish input) throws RestaurantException{
-        this.dishList.add(input);
-        this.dataHandler.saveDishesToStorage(new ArrayList<>(this.getDishesList()));
+            this.dishList.add(input);
+            this.dataHandler.saveDishesToStorage(new ArrayList<>(this.getDishesList()));
     }
 
     public void tableListAdd(Table input) throws RestaurantException{

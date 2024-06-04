@@ -10,3 +10,4 @@
 9;Srnčí guláš;srnci_gulas_01;195;15
 10;Těstoviny Aglio Olio Pepperoncino;testoviny_aglio_01;180;15
 11;Domácí hamburger 350g;domaci_hamburger_01;290;25
+12;Procesecco 0,7l;prosecco_01;340;5

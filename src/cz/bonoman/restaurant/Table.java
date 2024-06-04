@@ -10,4 +10,5 @@ public class Table {
 
     public int getId(){return this.id;}
     public int getCapacity(){return this.capacity;}
+    public void setCapacity(int input){this.capacity = input;}
 }
