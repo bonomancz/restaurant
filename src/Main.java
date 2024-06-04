@@ -50,7 +50,7 @@ public class Main {
                 manager.loadStorageData();
             }
         }catch(StorageDataException e){
-            System.err.println("Datové úložiště není dostupné.\nGenerují se nová data.");
+            System.err.println("Datové úložiště není dostupné.\n" + e.getMessage() + "\nGenerují se nová data.");
             try{
                 manager.prepareDataStorage();
                 manager.initTables(20);
@@ -58,9 +58,8 @@ public class Main {
                 manager.initDishes();
                 manager.initOrders();
             }catch(StorageDataException dse){
-                throw new RestaurantException(dse.getMessage());
+                throw new RestaurantException("initSystem(): " + dse.getMessage());
             }
-            throw new RestaurantException("initSystem(): " + e.getMessage());
         }
     }
 }
