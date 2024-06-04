@@ -58,7 +58,7 @@ public class RestaurantManager {
                 System.out.println("Data v pořádku načtena.");
             } else { // unavailable storage, content generated automatically
                 this.flushMemoryStructures();this.prepareDataStorage();this.initDishes();this.initTables(20);this.initOrders();
-                throw new RestaurantException("Storage: Data nebyla kompletně načtena. Systém bude pokračovat s prázdnými daty.");
+                System.err.println("loadStorageData(): Data nebyla kompletně načtena. Systém bude pokračovat s prázdnými daty.");
             }
         }catch(StorageDataException e){throw new RestaurantException("loadStorageData(): " + e.getMessage());}
     }
